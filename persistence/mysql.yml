@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:5.7
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Prague
+    volumes:
+      - ./volumes/mysql/dump:/dump
+      - ./volumes/mysql/data:/var/lib/mysql
+    networks:
+      - persistence
+    ports: 
+      - 3306:3306
+
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  persistence:
+    external: true

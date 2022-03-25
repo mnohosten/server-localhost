@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - ./volumes/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./volumes/elasticsearch/synonym.txt:/usr/share/elasticsearch/config/analysis/synonym.txt
+    networks:
+      - persistence
+
+networks:
+  persistence:
+    external: true

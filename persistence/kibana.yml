@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=inbound
+        - traefik.http.routers.kibana.rule=Host(`kibana.localhost`)
+        - traefik.http.routers.kibana.middlewares=auth        
+        - traefik.http.services.kibana.loadbalancer.server.port=5601
+      restart_policy:
+        condition: on-failure
+    networks:
+      - persistence
+      - inbound
+
+networks:
+  inbound:
+    external: true
+  persistence:
+    external: true

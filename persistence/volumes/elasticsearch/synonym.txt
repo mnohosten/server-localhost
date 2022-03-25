@@ -1,0 +1,2 @@
+nam. => namesti
+ul. => ulice

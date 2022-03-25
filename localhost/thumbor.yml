@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+
+  thumbor:
+    image: apsl/thumbor-multiprocess
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    networks:
+      - inbound
+    environment:
+#      - AUTO_WEBP=True
+#      - ALLOW_UNSAFE_URL=True
+#      - QUALITY=60
+      - AUTO_WEBP=True
+      - ALLOW_UNSAFE_URL=False
+      - SECURITY_KEY=40373f473ae8a95e22dd42f4d362fe30
+      - ALLOWED_SOURCES=['varkala']
+      - QUALITY=60
+    deploy:
+      labels:
+        - "traefik.http.routers.thumbor.rule=Host(`thumbor.localhost`)"
+        - "traefik.http.routers.thumbor.service=thumbor"
+        - "traefik.http.services.thumbor.loadbalancer.server.port=8000"
+        - "traefik.docker.network=inbound"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  inbound:
+    external: true

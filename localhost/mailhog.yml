@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    networks:
+      - inbound
+    deploy:
+      labels:
+        - "traefik.http.routers.mailhog.rule=Host(`mailhog.localhost`)"
+        - "traefik.http.routers.mailhog.service=mailhog"
+        - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
+        - "traefik.docker.network=inbound"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  inbound:
+    external: true

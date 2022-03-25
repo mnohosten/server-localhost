@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+
+  mongodb:
+    image: mongo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - persistence
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  persistence:
+    external: true
+
+volumes:
+  mongodb_data: {}

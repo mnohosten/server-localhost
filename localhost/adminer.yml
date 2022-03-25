@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+
+  adminer:
+    image: adminer
+    networks:
+      - inbound
+      - persistence
+    deploy:
+      labels:
+        - "traefik.http.routers.adminer.rule=Host(`adminer.localhost`)"
+        - "traefik.http.routers.adminer.service=adminer"
+        - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+        - "traefik.docker.network=inbound"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  persistence:
+    external: true
+  inbound:
+    external: true

@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+
+  sentry:
+    image: sentry
+    networks:
+      - inbound
+      - persistence
+    ports:
+      - 9001:9000
+    deploy:
+      labels:
+        - "traefik.http.routers.sentry.rule=Host(`sentry.localhost`)"
+        - "traefik.http.routers.sentry.service=sentry"
+        - "traefik.http.services.sentry.loadbalancer.server.port=9000"
+        - "traefik.docker.network=inbound"
+      restart_policy:
+        condition: on-failure
+
+networks:
+  inbound:
+    external: true
+  persistence:
+    external: true

@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"  
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - persistence
+      - inbound
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=inbound
+        - traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.localhost`)
+        - traefik.http.routers.rabbitmq.service=rabbitmq
+        - traefik.http.services.rabbitmq.loadbalancer.server.port=15672
+      restart_policy:
+        condition: on-failure
+
+networks:
+  persistence:
+    external: true
+  inbound:
+    external: true
+volumes:
+  rabbitmq_data: {}
