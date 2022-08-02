@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  pure-ftpd:
+    image: stilliard/pure-ftpd
+    environment:
+      FTP_USER_NAME: user
+      FTP_USER_PASS: pass
+      FTP_USER_HOME: /home/bob
+    volumes:
+      - ./volumes/pure-ftpd:/home/bob
+    ports:
+      - "21:21"
+    networks:
+      - persistence      
+
+networks:
+  persistence:
+    external: true  
