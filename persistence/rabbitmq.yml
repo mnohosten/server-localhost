@@ -7,13 +7,15 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "100m"
+        max-size: "10m"
         max-file: "10"  
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - persistence
       - inbound
+    ports:
+      - 5672:5672
     deploy:
       labels:
         - traefik.enable=true
