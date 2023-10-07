@@ -14,8 +14,6 @@ services:
     networks:
       - persistence
       - inbound
-    ports:
-      - 5672:5672
     deploy:
       labels:
         - traefik.enable=true
