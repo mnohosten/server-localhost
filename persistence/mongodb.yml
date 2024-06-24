@@ -16,6 +16,8 @@ services:
       - mongodb_data:/data/db
     networks:
       - persistence
+    ports:
+      - "27017:27017"
     deploy:
       restart_policy:
         condition: on-failure
