@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+
+  loki:
+    image: grafana/loki:latest
+    networks:
+      - inbound
+      - persistence
+    ports:
+      - 3100:3100
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+networks:
+  inbound:
+    external: true
+  persistence:
+    external: true
