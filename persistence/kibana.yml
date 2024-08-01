@@ -17,7 +17,7 @@ services:
         - traefik.enable=true
         - traefik.docker.network=inbound
         - traefik.http.routers.kibana.rule=Host(`kibana.localhost`)
-        - traefik.http.routers.kibana.middlewares=auth        
+#        - traefik.http.routers.kibana.middlewares=auth        
         - traefik.http.services.kibana.loadbalancer.server.port=5601
       restart_policy:
         condition: on-failure
