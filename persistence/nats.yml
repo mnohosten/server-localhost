@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  nats1:
+    image: nats:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    command:
+      - '--jetstream'
+      - '--server_name=nats1'
+      - '--cluster'
+      - 'nats://0.0.0.0:6222'
+      - '--cluster_name=my_cluster'
+      - '--routes=nats://nats2:6222'
+      - '-m'
+      - '8222'
+      - '--user=myuser'
+      - '--pass=mypassword'
+    networks:
+      - persistence
+    # No ports: all traffic is internal on the overlay network
+
+  nats2:
+    image: nats:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    command:
+      - '--jetstream'
+      - '--server_name=nats2'
+      - '--cluster'
+      - 'nats://0.0.0.0:6222'
+      - '--cluster_name=my_cluster'
+      - '--routes=nats://nats1:6222'
+      - '-m'
+      - '8223'
+      - '--user=myuser'
+      - '--pass=mypassword'
+    networks:
+      - persistence
+
+  prometheus-nats-exporter-1:
+    image: natsio/prometheus-nats-exporter:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    command:
+      - '-jsz=all'
+      - '-varz'
+      - '-channelz'
+      - '-serverz'
+      - 'http://nats1:8222'
+    networks:
+      - persistence
+    depends_on:
+      - nats1
+
+  prometheus-nats-exporter-2:
+    image: natsio/prometheus-nats-exporter:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    command:
+      - '-jsz=all'
+      - '-varz'
+      - '-channelz'
+      - '-serverz'
+      - 'http://nats2:8223'
+    networks:
+      - persistence
+    depends_on:
+      - nats2
+    # No ports: all traffic is internal on the overlay network
+
+networks:
+  persistence:
+    external: true
