@@ -20,7 +20,6 @@ services:
       - '--pass=mypassword'
     networks:
       - persistence
-    # No ports: all traffic is internal on the overlay network
 
   nats2:
     image: nats:latest
@@ -75,7 +74,6 @@ services:
       - persistence
     depends_on:
       - nats2
-    # No ports: all traffic is internal on the overlay network
 
 networks:
   persistence:
